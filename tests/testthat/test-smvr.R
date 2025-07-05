@@ -79,6 +79,19 @@ test_that("comparison", {
     smvr_vec >= parse_semver("1.0.0+foobar"),
     c(TRUE, TRUE, FALSE, TRUE)
   )
+
+  # Can be compared with string notation
+  expect_identical(
+    smvr_vec >= "1.0.0-alpha.10",
+    c(TRUE, TRUE, FALSE, TRUE)
+  )
+
+  # When the string notation have more than 5 components,
+  # the comparison will fail
+  expect_snapshot(
+    smvr_vec >= "0.0.0-1.2.3.4.5.6",
+    error = TRUE
+  )
 })
 
 test_that("NA can be cast to pre_release_ids", {
@@ -132,7 +145,6 @@ test_that("cast from/to numeric_version", {
 
 test_that("invalid build metadata", {
   expect_snapshot(
-    smvr(1, build = c("foo", "bar.baz", NA, "@foo")),
-    error = TRUE
+    smvr(1, build = c("foo", "bar.baz", NA, "@foo"))
   )
 })

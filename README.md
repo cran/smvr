@@ -7,6 +7,8 @@
 
 [![CRAN
 status](https://www.r-pkg.org/badges/version/smvr)](https://CRAN.R-project.org/package=smvr)
+[![smvr status
+badge](https://eitsupi.r-universe.dev/smvr/badges/version)](https://eitsupi.r-universe.dev/smvr)
 <!-- badges: end -->
 
 Simple implementation of [Semantic Versioning
@@ -36,17 +38,17 @@ pak::pak("eitsupi/smvr")
 library(smvr)
 
 # Parse version characters into smvr objects
-v <- parse_semver(c("1.0.0", "1.0.0-alpha", "1.0.0-alpha.1", "1.0.1+20250621", "0.9.0"))
+v <- parse_semver(c("1.0.0", "1.0.0-alpha.2", "1.0.0-alpha.10", "1.0.1+20250621", "0.9.0"))
 
 # Sort versions
 sort(v)
 #> <smvr[5]>
-#> [1] 0.9.0          1.0.0-alpha    1.0.0-alpha.1  1.0.0          1.0.1+20250621
+#> [1] 0.9.0          1.0.0-alpha.2  1.0.0-alpha.10 1.0.0          1.0.1+20250621
 
 # Can compare with string notation
-v[v < "1.0.0"]
-#> <smvr[3]>
-#> [1] 1.0.0-alpha   1.0.0-alpha.1 0.9.0
+v["1.0.0-alpha" < v & v < "1.0.0"]
+#> <smvr[2]>
+#> [1] 1.0.0-alpha.2  1.0.0-alpha.10
 
 # Works with tibble data frame and dplyr
 tibble::tibble(version = v) |>
@@ -59,8 +61,8 @@ tibble::tibble(version = v) |>
 #>          version `>= 1.0.0` `pre-release`
 #>           <smvr> <lgl>      <lgl>        
 #> 1          0.9.0 FALSE      FALSE        
-#> 2    1.0.0-alpha FALSE      TRUE         
-#> 3  1.0.0-alpha.1 FALSE      TRUE         
+#> 2  1.0.0-alpha.2 FALSE      TRUE         
+#> 3 1.0.0-alpha.10 FALSE      TRUE         
 #> 4          1.0.0 TRUE       FALSE        
 #> 5 1.0.1+20250621 TRUE       FALSE
 ```
@@ -72,21 +74,21 @@ tibble::tibble(version = v) |>
 - Tidyverse compatibility (`{tibble}`, `{dplyr}`, etc.).
 - No dependencies except `{vctrs}`.
 
-## Known Limitations
-
-The number of pre-release identifier fields is limited to 5.
-
-``` r
-# Only 5 pre-release fields are supported:
-try(parse_semver("1.2.3-a.b.c.d.e.f")) # Having 6 dot separated identifiers
-#> Error in parse_semver("1.2.3-a.b.c.d.e.f") : 
-#>   Unsupported pre-release identifiers in '1.2.3-a.b.c.d.e.f'.
-#> ! Only up to 5 pre-release identifiers are supported, got 6.
-```
-
 ## Related Works
 
+- The numeric version class vector can be crated with
+  `numeric_version()` in base R works well for versions that only have
+  MAJOR.MINOR.PATCH. But it does not support pre-release identifiers of
+  SemVer, so in the case of including pre-release versions, it is not
+  suitable.
 - The [semver](https://CRAN.R-project.org/package=semver) package is a
   wrapper for a C++ SemVer parser. The class provided by this package is
   a special list, which does not work well with `{tibble}` and
   `{dplyr}`.
+- The [semverutils](https://CRAN.R-project.org/package=semverutils)
+  package has a SemVer parser written in R. It creates a single version
+  as an `{R6}` object, which is not vectorized. Also, at the moment
+  (version 0.1.0, published 2020-02-22 on CRAN), it has a bug in
+  comparing pre-release versions[^1], so it does not work correctly.
+
+[^1]: <https://github.com/ajwtech/semverutils/issues/2>

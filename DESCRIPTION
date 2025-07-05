@@ -1,9 +1,9 @@
 Package: smvr
-Title: Simple Implementation of Semantic Versioning
-Version: 0.1.0
+Title: Simple Implementation of Semantic Versioning (SemVer)
+Version: 0.2.0
 Authors@R: 
     person("Tatsuya", "Shima", , "ts1s1andn@gmail.com", role = c("aut", "cre"))
-Description: Simple implementation of Semantic Versioning 2.0.0 on the
+Description: Simple implementation of Semantic Versioning 2.0.0 ('SemVer') on the
     'vctrs' package.  This package provides a simple way to create,
     compare, and manipulate semantic versions in R. It is designed to be
     lightweight and easy to use.
@@ -17,8 +17,8 @@ Config/testthat/edition: 3
 Encoding: UTF-8
 RoxygenNote: 7.3.2
 NeedsCompilation: no
-Packaged: 2025-06-24 12:31:56 UTC; rstudio
+Packaged: 2025-07-05 10:42:30 UTC; rstudio
 Author: Tatsuya Shima [aut, cre]
 Maintainer: Tatsuya Shima <ts1s1andn@gmail.com>
 Repository: CRAN
-Date/Publication: 2025-06-27 13:40:02 UTC
+Date/Publication: 2025-07-05 11:40:01 UTC

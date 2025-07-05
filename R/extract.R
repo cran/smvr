@@ -11,6 +11,7 @@
 #' - [extract_pre_release_ids()] returns [pre_release_ids].
 #' - [extract_build_metadata()] returns character.
 #' @seealso
+#' - [smvr()] to create a [smvr] object from components.
 #' - [check-component] functions for checking if
 #'   [smvr] object has a specific component.
 #' @examples
@@ -88,5 +89,6 @@ extract_pre_release_ids.smvr <- function(x, ...) {
 #' @rdname extract-component
 #' @export
 extract_build_metadata.smvr <- function(x, ...) {
-  field(x, "build")
+  field(x, "build") |>
+    as.character()
 }

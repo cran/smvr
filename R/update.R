@@ -5,13 +5,16 @@
 #'
 #' - `increment_major()`, `increment_minor()`, and `increment_patch()` update
 #'   the major, minor, and patch version numbers respectively.
+#'   Note that these functions reset the pre-release and build metadata to empty.
 #' - `mark_as_pre_release()` marks the version as a pre-release version.
 #' - `add_build_metadata()` adds build metadata to the version.
 #'
 #' @param x An version object
 #' @param ... Additional arguments passed to methods.
-#' @param ids A character vector of pre-release identifiers.
-#' @param metadata A character vector of build metadata.
+#' @param ids Something can be cast to [pre_release_ids] representing the
+#'   pre-release identifiers, length must be 1 or the same as `x`.
+#' @param metadata A character vector of build metadata,
+#'   length must be 1 or the same as `x`.
 #' @return An updated version object with the specified changes applied.
 #' @examples
 #' v <- parse_semver(c("0.9.9", "1.0.0-a.1", "1.1.0+1"))
@@ -19,7 +22,7 @@
 #' increment_major(v)
 #' increment_minor(v)
 #' increment_patch(v)
-#' mark_as_pre_release(v, ids = c("pre.1"))
+#' mark_as_pre_release(v, ids = "rc.1")
 #' add_build_metadata(v, metadata = "build.1")
 #' @name update-version
 NULL
@@ -89,7 +92,7 @@ mark_as_pre_release <- function(x, ...) {
 
 #' @rdname update-version
 #' @export
-mark_as_pre_release.smvr <- function(x, ids = "pre", ...) {
+mark_as_pre_release.smvr <- function(x, ids, ...) {
   ids <- vec_cast(ids, new_pre_release_ids())
   if (anyNA(ids)) {
     cli::cli_abort(
@@ -102,7 +105,7 @@ mark_as_pre_release.smvr <- function(x, ids = "pre", ...) {
   }
   # Recycle ids if the length is 1
   field(x, "pre_release") <- if (length(ids) == 1L) {
-    rep(ids, length(x))
+    vec_rep(ids, length(x))
   } else {
     ids
   }
@@ -118,41 +121,26 @@ add_build_metadata <- function(x, ...) {
 #' @rdname update-version
 #' @export
 add_build_metadata.smvr <- function(x, metadata = "", ...) {
-  metadata <- vec_cast(metadata, character())
-  if (anyNA(metadata)) {
+  parsed <- suppressWarnings(vec_cast(
+    metadata,
+    new_parsed_chr_build_metadata()
+  ))
+
+  if (anyNA(parsed)) {
     cli::cli_abort(
       c(
         "Adding build metadata failed.",
-        x = "Invalid metadata: {.val {metadata[is.na(metadata)]}}",
-        i = "{.code NA} values are not allowed in {.arg metadata}."
+        x = "Invalid metadata: {.val {metadata[is.na(parsed)]}}",
+        i = "Invalid pattern or {.code NA} values are not allowed."
       )
     )
   }
-  # Check the build metadata pattern
-  if (
-    any(
-      !grepl(BUILD_METADATA_PATTERN, metadata, perl = TRUE) &
-        nzchar(metadata) &
-        !is.na(metadata)
-    )
-  ) {
-    problematic_builds <- metadata[
-      !grepl(BUILD_METADATA_PATTERN, metadata, perl = TRUE) &
-        nzchar(metadata) &
-        !is.na(metadata)
-    ]
-    cli::cli_abort(
-      c(
-        "{.arg metadata} must match the pattern {.str {BUILD_METADATA_PATTERN}}.",
-        x = "Problematic values: {.val {problematic_builds}}"
-      )
-    )
-  }
+
   # Recycle metadata if the length is 1
-  field(x, "build") <- if (length(metadata) == 1L) {
-    rep(metadata, length(x))
+  field(x, "build") <- if (length(parsed) == 1L) {
+    vec_rep(parsed, length(x))
   } else {
-    metadata
+    parsed
   }
   x
 }

@@ -25,15 +25,22 @@
       ! `patch` must be non-negative integer values.
       x Problematic values: -1, -2, -3, -4, -5, -6, -7, -8, -9, -10, -11, -12, -13, -14, -15, -16, -17, -18, ..., -99, and -100
 
+# comparison
+
+    Code
+      smvr_vec >= "0.0.0-1.2.3.4.5.6"
+    Condition
+      Error in `vec_compare()`:
+      ! `x` and `y` are not comparable: must have the same number of columns
+
 # cast from/to character
 
     Code
       vec_cast(c("1.0.0", "1.0", "1.0.0+build", "1.0.0-alpha.1", "foo"), smvr())
     Condition
       Warning:
-      ! Cannot parse '1.0' as semantic version, setting to `NA`.
-      Warning:
-      ! Cannot parse 'foo' as semantic version, setting to `NA`.
+      ! Invalid version strings detected, setting to `NA`.
+      x Problematic values: "1.0" and "foo"
     Output
       <smvr[5]>
       [1] 1.0.0         <NA>          1.0.0+build   1.0.0-alpha.1 <NA>         
@@ -45,7 +52,7 @@
       numeric_version(character()))
     Condition
       Error in `vec_cast.numeric_version.smvr()`:
-      ! Pre-release `smvr` cannot be cast to `numeric_version`.
+      ! Pre-release <smvr> cannot be cast to <numeric_version>.
       x Problematic values: 1.0.0-a.1 and 1.0.0-a.2
 
 ---
@@ -55,7 +62,7 @@
       smvr())
     Condition
       Error in `vec_cast.smvr.numeric_version()`:
-      ! Cannot cast `numeric_version` with more than 3 components to `smvr`.
+      ! Cannot cast <numeric_version> with more than 3 components to <smvr>.
       x Problematic values: 1.2.3.4 and 1.2.3.4.5
 
 # invalid build metadata
@@ -63,7 +70,11 @@
     Code
       smvr(1, build = c("foo", "bar.baz", NA, "@foo"))
     Condition
-      Error in `smvr()`:
-      ! `build` must match the pattern "^[0-9A-Za-z-]+(?:\\.[0-9A-Za-z-]+)*$".
+      Warning in `smvr()`:
+      ! Invalid build metadata detected, setting to `NA`.
       x Problematic values: "@foo"
+      i Build metadata should have the pattern: "^([0-9A-Za-z-]+(?:\\.[0-9A-Za-z-]+)*)$"
+    Output
+      <smvr[4]>
+      [1] 1.0.0+foo     1.0.0+bar.baz <NA>          <NA>         
 
