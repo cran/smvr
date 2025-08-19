@@ -1,6 +1,6 @@
 Package: smvr
 Title: Simple Implementation of Semantic Versioning (SemVer)
-Version: 0.2.0
+Version: 0.2.1
 Authors@R: 
     person("Tatsuya", "Shima", , "ts1s1andn@gmail.com", role = c("aut", "cre"))
 Description: Simple implementation of Semantic Versioning 2.0.0 ('SemVer') on the
@@ -17,8 +17,8 @@ Config/testthat/edition: 3
 Encoding: UTF-8
 RoxygenNote: 7.3.2
 NeedsCompilation: no
-Packaged: 2025-07-05 10:42:30 UTC; rstudio
+Packaged: 2025-08-19 14:26:01 UTC; rstudio
 Author: Tatsuya Shima [aut, cre]
 Maintainer: Tatsuya Shima <ts1s1andn@gmail.com>
 Repository: CRAN
-Date/Publication: 2025-07-05 11:40:01 UTC
+Date/Publication: 2025-08-19 15:10:02 UTC
